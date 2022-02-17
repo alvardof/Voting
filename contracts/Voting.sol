@@ -86,8 +86,8 @@ contract Voting{
 
     //Vote validations
     modifier validateVoto(address _candidate){
-        require(voters[msg.sender].quota, "User previously voted");
         require(voters[msg.sender].flag, "voter not previously registered");
+        require(voters[msg.sender].quota, "User previously voted");
         require(candidates[_candidate].flag, "Candidate not previously registered");
         require(_candidate != msg.sender, "cannot self-vote");
         require(block.timestamp - timestamp < 7 days, "one week to vote has expired");

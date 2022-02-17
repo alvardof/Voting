@@ -6,7 +6,12 @@
   "directories": {
     "test": "test"
   },
-  "scripts": {},
+  "scripts": {
+    "compile" : "truffle compile",
+    "test" : "truffle test"
+    
+
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

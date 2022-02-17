@@ -12,7 +12,7 @@ contract('Voting', account => {
 
     context('contructor', async () => {
 
-        it('nominacion en cero', async () => {
+        it('Start nominations at 0', async () => {
 
             const nominations = await VotingInstance.number_candidates();
             expect(nominations.toNumber()).to.equal(0);
@@ -22,9 +22,9 @@ contract('Voting', account => {
     });
 
 
-    context('registro usuario', async () => {
+    context('User registration', async () => {
 
-        it('que el usuario no este previamente registrado', async () => {
+        it('The user cannot be previously registered', async () => {
             try {
                 
                 await VotingInstance.registerUser({from: account_1});
@@ -44,9 +44,9 @@ contract('Voting', account => {
 
 
 
-    context('postular candidatos', async () => {
+    context('Nominate candidates', async () => {
 
-        it('solo el dueño puede postular', async () => {
+        it('Only the owner can nominate candidates', async () => {
 
             
             try {
@@ -64,7 +64,7 @@ contract('Voting', account => {
 
 
 
-        it('el candidato no esta previamente registrado como usuario', async () => {
+        it('The candidate must be previously registered as a user', async () => {
 
             
             try {
@@ -81,7 +81,7 @@ contract('Voting', account => {
         });
 
 
-        it('el candidato ya esta postulado', async () => {
+        it('The candidate cannot run again', async () => {
 
             
             try {
@@ -101,7 +101,7 @@ contract('Voting', account => {
 
 
 
-        it('cupo de 5 maximo', async () => {
+        it('Maximum of 5 candidates may apply', async () => {
 
             
             try {
@@ -136,9 +136,33 @@ contract('Voting', account => {
     });
 
 
-    context('funcion votar', async () => {
+    context('Voting', async () => {
+    
 
-        it('ya voto', async () => {
+        it('voter must be previously registered', async () => {
+
+
+            try {
+
+                await VotingInstance.registerUser({from: account_8});
+                await VotingInstance.nominationCantidate(account_8, {from: account_1});
+
+                await VotingInstance.vote(account_8, {from: account_9});
+
+
+            } catch (error) {
+
+                expect(error.reason).to.equal('voter not previously registered');
+                
+            }
+        
+            
+        
+        });
+
+
+        
+        it('You can only vote once', async () => {
 
             
             try {
@@ -159,38 +183,16 @@ contract('Voting', account => {
 
         
         });
-
-
-        /*it('el votante no esta previamente registrado', async () => {
-
-
-            try {
-
-                await VotingInstance.registerUser({from: account_8});
-                await VotingInstance.nominationCantidate(account_8, {from: account_1});
-
-                await VotingInstance.vote(account_8, {from: account_9});
-
-
-            } catch (error) {
-
-                expect(error.reason).to.equal('voter not previously registered');
-                
-            }
         
+
             
-        
-        });*/
-
-         it('csndidato no registrado previamente', async () => {
+         it('the candidate must be previously nominated', async () => {
 
 
             try {
 
                 await VotingInstance.registerUser({from: account_2});
                 await VotingInstance.registerUser({from: account_8});
-                //await VotingInstance.nominationCantidate(account_8, {from: account_1});
-
                 await VotingInstance.vote(account_8, {from: account_2});
 
 
@@ -203,9 +205,11 @@ contract('Voting', account => {
             
         
         });
+        
 
+        
 
-        it('no se puede votar por si mismo', async () => {
+        it('Cannot vote for itself', async () => {
 
 
             try {
@@ -225,19 +229,19 @@ contract('Voting', account => {
             
         
         });
+        
 
 
-        it('plazo de una semana para votar', async () => {
+        it('cannot vote after one week', async () => {
 
 
             try {
 
-                //await time.increase();
-                //await VotingInstance.registerUser({from: account_5});
-                //await VotingInstance.registerUser({from: account_2});
-                //await VotingInstance.nominationCantidate(account_5, {from: account_1});
-
-                await VotingInstance.vote(account_3, {from: account_2});
+                await time.increase();
+                await VotingInstance.registerUser({from: account_5});
+                await VotingInstance.registerUser({from: account_2});
+                await VotingInstance.nominationCantidate(account_5, {from: account_1});
+                await VotingInstance.vote(account_5, {from: account_2});
 
 
             } catch (error) {
@@ -245,8 +249,6 @@ contract('Voting', account => {
                 expect(error.reason).to.equal('one week to vote has expired');
                 
             }
-        
-            
         
         });
 

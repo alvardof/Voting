@@ -7,12 +7,9 @@ async function increase(){
         params: [oneWeeK],
         id: new Date().getTime()
     }, () => {});
-
+}
     module.exports = {
         increase
     }
 
 
-
-
-}
